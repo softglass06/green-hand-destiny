@@ -1,5 +1,5 @@
 /* 小白算命 Service Worker —— 缓存优先，离线可用 */
-const CACHE = 'xiaobai-suanming-v2';
+const CACHE = 'xiaobai-suanming-v3';
 const ASSETS = [
   './',
   './index.html',

@@ -8,6 +8,11 @@
   var cqLines = [];
   var cqTossing = false;
   var countdownTimer = null;
+  var secretClicks = 0;
+
+  var SECRET_L1 = ['天机不可泄露，再问就要折寿了。', '一日一卦，卦多不灵。', '命数有定，贪多则乱。', '天机已示，何必再问。'];
+  var SECRET_L2 = ['卦不过三，再叩天门，恐有反噬。', '你这是在跟老天讨价还价。', '窥探太多，命盘会记住你的。', '一念贪卦，因果自担。'];
+  var SECRET_L3 = ['此行逆乱阴阳，因果自负。', '再点下去，逆乱阴阳，祸福难料。', '阴阳有序，尔等逆乱，后果自承。', '天机三缄，尔已越界，逆乱阴阳，好自为之。'];
 
   var SHICHEN = [
     { zhi: '子', hour: 23 }, { zhi: '丑', hour: 1 }, { zhi: '寅', hour: 3 },
@@ -41,6 +46,27 @@
     var h = getHistory();
     h.unshift(o);
     localStorage.setItem('xsq-history', JSON.stringify(h.slice(0, 80)));
+  }
+
+  function todayCount() {
+    var s = localStorage.getItem('xsq-count');
+    if (!s) return 0;
+    try { var o = JSON.parse(s); return o.date === todayStr() ? o.n : 0; } catch (e) { return 0; }
+  }
+  function incrTodayCount() {
+    localStorage.setItem('xsq-count', JSON.stringify({ date: todayStr(), n: todayCount() + 1 }));
+  }
+  function extraUnlocked() {
+    var s = localStorage.getItem('xsq-extra');
+    if (!s) return false;
+    try { var o = JSON.parse(s); return o.date === todayStr() && !!o.granted; } catch (e) { return false; }
+  }
+  function unlockExtra() {
+    localStorage.setItem('xsq-extra', JSON.stringify({ date: todayStr(), granted: true }));
+  }
+  function canDraw() {
+    var max = extraUnlocked() ? 2 : 1;
+    return todayCount() < max;
   }
 
   // ---- 标签页 ----
@@ -163,11 +189,12 @@
   }
 
   function renderChouqian() {
-    var draw = getDraw();
-    if (draw) {
-      renderDrawResult(draw);
-    } else {
+    if (canDraw()) {
       renderDrawPrompt();
+    } else {
+      var draw = getDraw();
+      if (draw) renderDrawResult(draw);
+      else renderDrawPrompt();
     }
     renderHistory();
   }
@@ -269,6 +296,7 @@
     };
     saveDraw(draw);
     saveHistory(draw);
+    incrTodayCount();
     renderChouqian();
   }
 
@@ -337,19 +365,59 @@
     $('cq-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // 当天想再抽一次时弹出的提示
+  // 当天想再抽一次时弹出的提示（点击「天机不可泄露」可层层深入）
   function showSecret() {
     var status = $('cq-status');
     status.innerHTML =
       '<div class="countdown-wrap">' +
-      '<div class="secret serif">天机不可泄露</div>' +
-      '<div class="secret-sub">一日一签，今日已求，静待明日再来</div>' +
+      '<div class="secret serif" id="cq-secret">天机不可泄露</div>' +
+      '<div class="secret-sub" id="cq-secret-msg">一日一签，今日已求，静待明日再来</div>' +
       '<div class="cd-digits">' +
       '<div class="blk"><div class="num" id="cd-h">00</div><div class="lbl">时</div></div>' +
       '<div class="blk"><div class="num" id="cd-m">00</div><div class="lbl">分</div></div>' +
       '<div class="blk"><div class="num" id="cd-s">00</div><div class="lbl">秒</div></div>' +
       '</div></div>';
     startCountdown();
+    $('cq-secret').addEventListener('click', onSecretClick);
+  }
+
+  function onSecretClick() {
+    if (extraUnlocked()) {
+      $('cq-secret-msg').textContent = '命门已开，今日缘分已尽，明日再来。';
+      return;
+    }
+    secretClicks++;
+    if (secretClicks >= 10) {
+      revealExtraDraw();
+      return;
+    }
+    $('cq-secret-msg').textContent = pickSecretMessage(secretClicks);
+    var el = $('cq-secret');
+    el.classList.remove('shake');
+    void el.offsetWidth;
+    el.classList.add('shake');
+  }
+
+  function pickSecretMessage(clicks) {
+    var list = clicks <= 3 ? SECRET_L1 : clicks <= 6 ? SECRET_L2 : SECRET_L3;
+    return list[Math.floor(Math.random() * list.length)];
+  }
+
+  function revealExtraDraw() {
+    unlockExtra();
+    stopCountdown();
+    var status = $('cq-status');
+    status.innerHTML =
+      '<div class="countdown-wrap">' +
+      '<div class="secret serif" style="font-size:23px;letter-spacing:3px">十问天机，天机已乱；十叩命门，命门自开。</div>' +
+      '<div class="secret-sub" style="color:var(--gold-2);margin-top:12px">逆炼五行，重塑阴阳——只为你再算一卦。</div>' +
+      '<button class="btn" id="cq-extra-draw" style="margin-top:20px">再算一卦</button>' +
+      '</div>';
+    $('cq-extra-draw').addEventListener('click', function () {
+      cqCat = null;
+      cqLines = [];
+      renderChouqian();
+    });
   }
 
   function trigramLabel(hex) {

@@ -173,8 +173,17 @@ select option { background: var(--bg-2); color: var(--text); }
 
 /* ===== 抽签 / 倒计时 ===== */
 .countdown-wrap { text-align: center; padding: 28px 16px; }
-.secret { font-size: 30px; letter-spacing: 6px; color: var(--gold-2); margin-bottom: 8px; }
+.secret { font-size: 30px; letter-spacing: 6px; color: var(--gold-2); margin-bottom: 8px; cursor: pointer; user-select: none; }
+.secret:hover { text-shadow: 0 0 16px rgba(224, 185, 106, .65); }
 .secret-sub { font-size: 14px; color: var(--muted); }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.secret.shake { animation: shake .4s ease; }
 .cd-digits { display: flex; justify-content: center; gap: 10px; margin: 22px 0; }
 .cd-digits .blk {
   min-width: 62px; padding: 12px 8px; border-radius: 12px;
