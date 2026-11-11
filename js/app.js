@@ -7,6 +7,7 @@
   var cqCat = null;
   var cqLines = [];
   var cqTossing = false;
+  var countdownTimer = null;
 
   var SHICHEN = [
     { zhi: '子', hour: 23 }, { zhi: '丑', hour: 1 }, { zhi: '寅', hour: 3 },
@@ -278,16 +279,19 @@
 
     var status = $('cq-status');
     status.innerHTML =
-      '<div class="countdown-wrap">' +
-      '<div class="secret serif">天机不可泄露</div>' +
-      '<div class="secret-sub">今日一签已求，静待明日再来</div>' +
+      '<div class="card" style="text-align:center">' +
+      '<h2 style="text-align:center"><span class="dot">◆</span>今日一签已求</h2>' +
+      '<p class="hint">每日仅此一签 · 明日 0 点后可再求</p>' +
       '<div class="cd-digits">' +
       '<div class="blk"><div class="num" id="cd-h">00</div><div class="lbl">时</div></div>' +
       '<div class="blk"><div class="num" id="cd-m">00</div><div class="lbl">分</div></div>' +
       '<div class="blk"><div class="num" id="cd-s">00</div><div class="lbl">秒</div></div>' +
-      '</div></div>';
+      '</div>' +
+      '<button class="btn ghost" id="cq-retry" style="margin-top:12px">再求一签</button>' +
+      '</div>';
 
     startCountdown();
+    $('cq-retry').addEventListener('click', showSecret);
 
     var catLabel = interp.catLabel;
     var resultHTML =
@@ -330,6 +334,22 @@
       '</div>';
 
     $('cq-result').innerHTML = resultHTML;
+    $('cq-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // 当天想再抽一次时弹出的提示
+  function showSecret() {
+    var status = $('cq-status');
+    status.innerHTML =
+      '<div class="countdown-wrap">' +
+      '<div class="secret serif">天机不可泄露</div>' +
+      '<div class="secret-sub">一日一签，今日已求，静待明日再来</div>' +
+      '<div class="cd-digits">' +
+      '<div class="blk"><div class="num" id="cd-h">00</div><div class="lbl">时</div></div>' +
+      '<div class="blk"><div class="num" id="cd-m">00</div><div class="lbl">分</div></div>' +
+      '<div class="blk"><div class="num" id="cd-s">00</div><div class="lbl">秒</div></div>' +
+      '</div></div>';
+    startCountdown();
   }
 
   function trigramLabel(hex) {
