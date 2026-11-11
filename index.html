@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#14182b">
+  <title>小白算命 · 八字 & 周易抽签</title>
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-bar">
+    <div class="app-bar-inner">
+      <div class="brand serif">小白算命<span class="sub">八字 · 周易</span></div>
+    </div>
+    <div class="app-bar-inner tabs-wrap" style="padding-top:0">
+      <nav class="tabs" style="width:100%">
+        <div class="tab active" data-tab="suanming">算命</div>
+        <div class="tab" data-tab="chouqian">抽签</div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ============ 算命 ============ -->
+    <section class="panel active" id="panel-suanming">
+      <div class="card">
+        <h2><span class="dot">◆</span>输入生辰</h2>
+        <div class="field">
+          <label>出生日期（公历）</label>
+          <input type="date" id="sm-date" value="2000-01-01" min="1900-01-01" max="2100-12-31">
+        </div>
+        <div class="field">
+          <label>出生时间（可选，用于定时柱）</label>
+          <input type="time" id="sm-time" value="12:00">
+        </div>
+        <div class="field">
+          <label>推算时辰</label>
+          <div id="sm-shichen" class="shichen-grid"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot">◆</span>想算哪方面</h2>
+        <div id="sm-cats" class="cats"></div>
+      </div>
+
+      <button class="btn" id="sm-btn">开始排盘</button>
+
+      <div id="sm-result"></div>
+    </section>
+
+    <!-- ============ 抽签 ============ -->
+    <section class="panel" id="panel-chouqian">
+      <div class="card" id="cq-status"></div>
+      <div id="cq-result"></div>
+
+      <div class="card">
+        <h2><span class="dot">◆</span>往期签</h2>
+        <div id="cq-history" class="history"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    小白算命 · 内容仅供娱乐参考，请理性看待，切勿迷信。
+  </footer>
+
+  <script src="js/yijing.js"></script>
+  <script src="js/data/hex-01-16.js"></script>
+  <script src="js/data/hex-17-32.js"></script>
+  <script src="js/data/hex-33-48.js"></script>
+  <script src="js/data/hex-49-64.js"></script>
+  <script src="js/bazi.js"></script>
+  <script src="js/interpret.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "小白算命",
+  "short_name": "小白算命",
+  "description": "八字算命与周易铜钱起卦，内容仅供娱乐参考。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14182b",
+  "theme_color": "#14182b",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
